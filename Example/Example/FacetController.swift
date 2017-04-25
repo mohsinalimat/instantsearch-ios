@@ -11,7 +11,7 @@ import UIKit
 import InstantSearchCore
 import InstantSearch
 
-class FacetController: UIViewController, RefinementTableViewDataSource {
+class FacetController: UIViewController, RefinementTableViewDataSource, UITableViewDataSource, UITableViewDelegate {
     
     var instantSearchBinder: InstantSearchBinder!
     @IBOutlet weak var refinementList: RefinementTableWidget!
@@ -21,14 +21,32 @@ class FacetController: UIViewController, RefinementTableViewDataSource {
     
     override func viewDidLoad() {
         refinementViewController = RefinementViewController(table: refinementList)
-        refinementList.dataSource = refinementViewController
-        refinementList.delegate = refinementViewController
+        refinementList.dataSource = self
+        refinementList.delegate = self
         refinementViewController.tableDataSource = self
         // refinementViewController.tableDelegate = self
         
         instantSearchBinder = AlgoliaSearchManager.instance.instantSearchBinder
         instantSearchBinder.add(widget: refinementList)
         instantSearchBinder.add(widget: statLabel)
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return refinementViewController.tableView(tableView, numberOfRowsInSection: section)
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        return refinementViewController.tableView(tableView, cellForRowAt: indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        return refinementViewController.tableView(tableView, didSelectRowAt: indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        print("Hello Height!")
+        
+        return 50
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath, containing facet: String, with count: Int, is refined: Bool) -> UITableViewCell {
